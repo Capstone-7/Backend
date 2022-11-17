@@ -2,6 +2,7 @@ package main
 
 import (
 	route "capstone/app/routes"
+	mongo_driver "capstone/drivers/mongo"
 	utils "capstone/utils"
 	"fmt"
 
@@ -9,16 +10,22 @@ import (
 )
 
 func main() {
+	// Setup DB
+	// Setup DB
+	client, err := mongo_driver.Connect()
+	if err != nil {
+		panic(err)
+	}
+	mongo_driver.SetClient(client)
+
 	e := echo.New()
-	appPort := ":"+utils.ReadENV("APP_PORT")
 	
 	// Init routes
 	appRoute := route.ControllerList{}
 	appRoute.Init(e)
 	
-	// Start server
-	fmt.Println("Starting server...")
-	
 	// Start in HTTPS mode
+	fmt.Println("Starting server...")
+	appPort := ":"+utils.ReadENV("APP_PORT")
 	e.StartTLS(appPort, "cert.pem", "key.pem")
 }
