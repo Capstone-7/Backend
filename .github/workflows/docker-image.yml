@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Stopping old docker container
+      run: docker stop /payoll || true
+    - name: Removing old docker container
+      run: docker rm /payoll || true
+    - name: Build docker images
+      run: docker build -t payoll-api:1.0.0 .
+    - name: Run docker
+      run: docker run -itd -v /home/slave/payoll/.env:/app/.env -v /home/slave/payoll/key.pem:/app/key.pem -v /home/slave/payoll/cert.pem:/app/cert.pem -p 443:443 --name payoll payoll-api:1.0.0
