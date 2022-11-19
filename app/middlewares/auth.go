@@ -9,15 +9,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Roles struct {
-	Role []string
-}
-
-func (r *Roles) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
+func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// Get token from header
 		tokenString := strings.Replace(c.Request().Header.Get("Authorization"), "Bearer ", "", -1)
-		
+
 		if tokenString == "" {
 			return c.JSON(http.StatusUnauthorized, helpers.Response{
 				Status:  http.StatusUnauthorized,
@@ -36,18 +32,6 @@ func (r *Roles) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		// Get user roles
-		role := appjwt.GetRoles(tokenString)
-		for _, allowedRole := range r.Role {
-			if role == allowedRole {
-				return next(c)
-			}
-		}
-
-		return c.JSON(http.StatusUnauthorized, helpers.Response{
-			Status:  http.StatusUnauthorized,
-			Message: "Unauthorized",
-			Data:    nil,
-		})
+		return next(c)
 	}
 }

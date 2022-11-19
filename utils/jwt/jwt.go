@@ -12,15 +12,15 @@ var jwtKey = util.ReadENV("JWT_SECRET")
 
 type JWTClaim struct {
 	ID 	 	string   `json:"id"`
-	Roles    []string `json:"roles"`
+	Role    string `json:"role"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(id string, roles []string) (tokenString string, err error) {
-	expirationTime := time.Now().Add(1 * time.Hour)
+func GenerateToken(id string, role string) (tokenString string, err error) {
+	expirationTime := time.Now().Add(12 * time.Hour)
 	claims := &JWTClaim{
 		ID:    		id,
-		Roles:    roles,
+		Role:		role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -71,7 +71,12 @@ func GetJWTPayload(signedToken string) *JWTClaim {
 	return claims
 }
 
-func GetRoles(signedToken string) []string {
+func GetRoles(signedToken string) string {
 	claims := GetJWTPayload(signedToken)
-	return claims.Roles
+	return claims.Role
+}
+
+func GetID(signedToken string) string {
+	claims := GetJWTPayload(signedToken)
+	return claims.ID
 }
