@@ -1,6 +1,8 @@
 package users
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 // Contains users usecase definition
 
@@ -21,7 +23,9 @@ type UseCase interface {
 	Login(domain *Domain) (string, error)
 	UpdateProfile(domain *Domain) (Domain, error)
 	UpdatePassword(old *Domain, new *Domain) (Domain, error)
-	RequestOTP(domain *Domain) (string, error)
+	ResetPassword(email, new_password, otp string) (Domain, error)
+	RequestOTP(email, scope string) (string, error)
+	VerifyEmail(email, code string) (string, error)
 	GetAllUsers() ([]Domain, error)
 	GetByID(id string) (Domain, error)
 	UpdateByAdmin(new *Domain) (Domain, error)

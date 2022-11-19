@@ -25,7 +25,8 @@ func main() {
 
 	// User
 	userRepo := drivers.NewUserRepository(mongo_driver.GetDB())
-	userUseCase := _userUseCase.NewUserUseCase(userRepo)
+	otpRepo := drivers.NewOTPRepository(mongo_driver.GetDB())
+	userUseCase := _userUseCase.NewUserUseCase(userRepo, otpRepo)
 	userController := _userController.NewUserController(userUseCase)
 	
 	// Init routes

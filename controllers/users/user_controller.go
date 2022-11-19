@@ -298,3 +298,100 @@ func (ctrl *UserController) DeleteUserByID(c echo.Context) error {
 		Data:    user,
 	})
 }
+
+func (ctrl *UserController) RequestOTP(c echo.Context) error {
+	// Get request body
+	request := requests.UserRequestOTP{}
+	c.Bind(&request)
+
+	// Validate request
+	val_err := request.Validate()
+	if val_err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Validation error",
+			Data:    val_err,
+		})
+	}
+
+	// Request OTP
+	_, err := ctrl.UserUseCase.RequestOTP(request.Email, request.Scope)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    nil,
+	})
+}
+
+func (ctrl *UserController) VerifyEmail(c echo.Context) error {
+	// Get request body
+	request := requests.UserVerifyEmail{}
+	c.Bind(&request)
+
+	// Validate request
+	val_err := request.Validate()
+	if val_err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Validation error",
+			Data:    val_err,
+		})
+	}
+
+	// Verify email
+	_, err := ctrl.UserUseCase.VerifyEmail(request.Email, request.OTP)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success verify email",
+		Data:    nil,
+	})
+}
+
+// Reset password
+func (ctrl *UserController) ResetPassword(c echo.Context) error {
+	// Get request body
+	request := requests.UserResetPassword{}
+	c.Bind(&request)
+
+	// Validate request
+	val_err := request.Validate()
+	if val_err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response{
+			Status:  http.StatusBadRequest,
+			Message: "Validation error",
+			Data:    val_err,
+		})
+	}
+
+	// Reset password
+	_, err := ctrl.UserUseCase.ResetPassword(request.Email, request.Password, request.OTP)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success reset password",
+		Data:    nil,
+	})
+}

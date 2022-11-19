@@ -29,6 +29,8 @@ func MsgForTag(tag string) string {
 		return "This field must be alphanumeric and unicode"
 	case "eqfield":
 		return "This field must be equal to [PARAM]"
+	case "len":
+		return "This field must be [PARAM] characters"
 	default:
 		return "Invalid field " + tag
 	}

@@ -31,6 +31,11 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 	users.GET("/profile", cl.UserController.GetProfile, middlewares.AuthMiddleware)
 	users.PUT("/profile", cl.UserController.UpdateProfile, middlewares.AuthMiddleware)
 	users.PUT("/update-password", cl.UserController.UpdatePassword, middlewares.AuthMiddleware)
+	
+	users.POST("/request-otp", cl.UserController.RequestOTP)
+	users.POST("/verify-email", cl.UserController.VerifyEmail)
+	users.POST("/reset-password", cl.UserController.ResetPassword)
+
 	users.GET("/all", cl.UserController.GetAllUsers, admin.Middleware)
 	users.GET("/:id", cl.UserController.GetUserByID, admin.Middleware)
 	users.PUT("/:id", cl.UserController.UpdateUserByID, admin.Middleware)
