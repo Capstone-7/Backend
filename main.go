@@ -11,6 +11,7 @@ import (
 	_userController "capstone/controllers/users"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -34,7 +35,13 @@ func main() {
 		UserController: *userController,
 	}
 	appRoute.Init(e)
-	
+
+	// Enable CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+
 	// Start in HTTPS mode
 	fmt.Println("Starting server...")
 	appPort := ":"+utils.ReadENV("APP_PORT")
