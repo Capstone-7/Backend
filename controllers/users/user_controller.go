@@ -34,8 +34,8 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
@@ -50,9 +50,9 @@ func (ctrl *UserController) Register(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, helpers.Response{
-		Status:  http.StatusOK,
-		Message: "Success",
+	return c.JSON(http.StatusCreated, helpers.Response{
+		Status:  http.StatusCreated,
+		Message: "Success creating user",
 		Data:    nil,
 	})
 }
@@ -65,8 +65,8 @@ func (ctrl *UserController) Login(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
@@ -83,7 +83,7 @@ func (ctrl *UserController) Login(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
-		Message: "Success",
+		Message: "Success login",
 		Data:    map[string]string{"token": jwt_token},
 	})
 }
@@ -107,7 +107,7 @@ func (ctrl *UserController) GetProfile(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
-		Message: "Success",
+		Message: "Success getting user profile",
 		Data:    response.FromDomain(&user),
 	})
 }
@@ -143,7 +143,7 @@ func (ctrl *UserController) GetUserByID(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
-		Message: "Success",
+		Message: "Success getting user profile",
 		Data:    response.FromDomain(&user),
 	})
 }
@@ -163,8 +163,8 @@ func (ctrl *UserController) UpdateUserByID(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
@@ -182,7 +182,7 @@ func (ctrl *UserController) UpdateUserByID(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
-		Message: "Success",
+		Message: "Success updating user profile",
 		Data:    user,
 	})
 }
@@ -206,15 +206,15 @@ func (ctrl *UserController) UpdateProfile(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
 	}
 
 	// Update user
-	_, err := ctrl.UserUseCase.UpdateProfile(domain)
+	user, err := ctrl.UserUseCase.UpdateProfile(domain)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response{
 			Status:  http.StatusInternalServerError,
@@ -225,8 +225,8 @@ func (ctrl *UserController) UpdateProfile(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
-		Message: "Success",
-		Data:    nil,
+		Message: "Success updating user profile",
+		Data:    user,
 	})
 }
 
@@ -249,8 +249,8 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
@@ -263,7 +263,7 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	new.Password = request.NewPassword
 
 	// Update user
-	_, err := ctrl.UserUseCase.UpdatePassword(old, new)
+	user, err := ctrl.UserUseCase.UpdatePassword(old, new)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response{
 			Status:  http.StatusInternalServerError,
@@ -275,7 +275,7 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success",
-		Data:    nil,
+		Data:    user,
 	})
 }
 
@@ -307,8 +307,8 @@ func (ctrl *UserController) RequestOTP(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
@@ -326,7 +326,7 @@ func (ctrl *UserController) RequestOTP(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
-		Message: "Success",
+		Message: "Success requesting OTP",
 		Data:    nil,
 	})
 }
@@ -339,8 +339,8 @@ func (ctrl *UserController) VerifyEmail(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
@@ -372,8 +372,8 @@ func (ctrl *UserController) ResetPassword(c echo.Context) error {
 	// Validate request
 	val_err := request.Validate()
 	if val_err != nil {
-		return c.JSON(http.StatusBadRequest, helpers.Response{
-			Status:  http.StatusBadRequest,
+		return c.JSON(http.StatusNotAcceptable, helpers.Response{
+			Status:  http.StatusNotAcceptable,
 			Message: "Validation error",
 			Data:    val_err,
 		})
