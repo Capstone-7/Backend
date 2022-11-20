@@ -183,7 +183,7 @@ func (ctrl *UserController) UpdateUserByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success updating user profile",
-		Data:    user,
+		Data:    response.FromDomain(&user),
 	})
 }
 
@@ -257,13 +257,14 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	}
 
 	old := domain
-	new := domain
+	new := users.Domain{
+		Password: request.NewPassword,
+	}
 
 	old.Password = request.OldPassword
-	new.Password = request.NewPassword
 
 	// Update user
-	user, err := ctrl.UserUseCase.UpdatePassword(old, new)
+	_, err := ctrl.UserUseCase.UpdatePassword(old, &new)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response{
 			Status:  http.StatusInternalServerError,
@@ -275,7 +276,7 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success",
-		Data:    user,
+		Data:    nil,
 	})
 }
 
@@ -295,7 +296,7 @@ func (ctrl *UserController) DeleteUserByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success",
-		Data:    user,
+		Data:    response.FromDomain(&user),
 	})
 }
 
