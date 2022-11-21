@@ -41,7 +41,7 @@ func (ctrl *UserController) Register(c echo.Context) error {
 		})
 	}
 
-	_, err := ctrl.UserUseCase.Register(request.ToDomain())
+	user, err := ctrl.UserUseCase.Register(request.ToDomain())
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response{
 			Status:  http.StatusBadRequest,
@@ -53,7 +53,7 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, helpers.Response{
 		Status:  http.StatusCreated,
 		Message: "Success creating user",
-		Data:    nil,
+		Data:    response.FromDomain(&user),
 	})
 }
 
@@ -183,7 +183,7 @@ func (ctrl *UserController) UpdateUserByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success updating user profile",
-		Data:    user,
+		Data:    response.FromDomain(&user),
 	})
 }
 
@@ -257,13 +257,14 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	}
 
 	old := domain
-	new := domain
+	new := users.Domain{
+		Password: request.NewPassword,
+	}
 
 	old.Password = request.OldPassword
-	new.Password = request.NewPassword
 
 	// Update user
-	user, err := ctrl.UserUseCase.UpdatePassword(old, new)
+	_, err := ctrl.UserUseCase.UpdatePassword(old, &new)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response{
 			Status:  http.StatusInternalServerError,
@@ -275,7 +276,7 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success",
-		Data:    user,
+		Data:    nil,
 	})
 }
 
@@ -295,7 +296,7 @@ func (ctrl *UserController) DeleteUserByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success",
-		Data:    user,
+		Data:    response.FromDomain(&user),
 	})
 }
 
@@ -393,5 +394,24 @@ func (ctrl *UserController) ResetPassword(c echo.Context) error {
 		Status:  http.StatusOK,
 		Message: "Success reset password",
 		Data:    nil,
+	})
+}
+
+// Get Total Users
+func (ctrl *UserController) GetTotalUsers(c echo.Context) error {
+	// Get total users
+	total, err := ctrl.UserUseCase.GetTotalUsers()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    total,
 	})
 }

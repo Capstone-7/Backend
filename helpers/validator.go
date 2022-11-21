@@ -31,6 +31,8 @@ func MsgForTag(tag string) string {
 		return "This field must be equal to [PARAM]"
 	case "len":
 		return "This field must be [PARAM] characters"
+	case "gte":
+		return "This field must be greater than or equal to [PARAM]"
 	default:
 		return "Invalid field " + tag
 	}

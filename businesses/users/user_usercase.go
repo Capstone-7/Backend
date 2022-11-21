@@ -128,7 +128,7 @@ func (u *UserUseCase) UpdatePassword(old *Domain, new *Domain) (Domain, error) {
 
 	// Bcrypt password
 	password, _ := bcrypt.GenerateFromPassword([]byte(new.Password), bcrypt.MinCost)
-	new.Password = string(password)
+	user.Password = string(password)
 
 	return u.UserRepository.Update(&user)
 }
@@ -293,4 +293,9 @@ func (u *UserUseCase) ResetPassword(email, new_password, code string) (Domain, e
 	_, err = u.OTPRepository.ConsumeOTP(&req)
 
 	return user, nil
+}
+
+// Get Total Users
+func (u *UserUseCase) GetTotalUsers() (int64, error) {
+	return u.UserRepository.Count()
 }

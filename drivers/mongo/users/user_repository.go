@@ -25,16 +25,17 @@ func (r *UserRepository) Create(domain *users.Domain) (users.Domain, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	// Generate ID
-	domain.ID = primitive.NewObjectID()
-
 	// Insert data
-	_, err := r.collection.InsertOne(ctx, domain)
+	res, err := r.collection.InsertOne(ctx, FromDomain(domain))
 	if err != nil {
 		return users.Domain{}, err
 	}
 
-	return *domain, nil
+	// Get inserted data
+	var user users.Domain
+	err = r.collection.FindOne(ctx, bson.M{"_id": res.InsertedID}).Decode(&user)
+
+	return user, nil
 }
 
 // GetAll
@@ -120,4 +121,18 @@ func (r *UserRepository) Delete(id primitive.ObjectID) (users.Domain, error) {
 	}
 
 	return user, nil
+}
+
+// Count Users
+func (r *UserRepository) Count() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	// Count user not deleted
+	count, err := r.collection.CountDocuments(ctx, bson.M{"deleted": primitive.NewDateTimeFromTime(time.Time{})})
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

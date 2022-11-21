@@ -7,7 +7,9 @@ import (
 	utils "capstone/utils"
 	"fmt"
 
+	_productsUseCase "capstone/businesses/products"
 	_userUseCase "capstone/businesses/users"
+	_productController "capstone/controllers/products"
 	_userController "capstone/controllers/users"
 
 	"github.com/labstack/echo/v4"
@@ -24,6 +26,11 @@ func main() {
 
 	e := echo.New()
 
+	//product
+	productRepo := drivers.NewProductRepository(mongo_driver.GetDB())
+	productUseCase := _productsUseCase.NewProductUseCase(productRepo)
+	productController := _productController.NewProductController(productUseCase)
+
 	// User
 	userRepo := drivers.NewUserRepository(mongo_driver.GetDB())
 	otpRepo := drivers.NewOTPRepository(mongo_driver.GetDB())
@@ -33,6 +40,7 @@ func main() {
 	// Init routes
 	appRoute := route.ControllerList{
 		UserController: *userController,
+		ProductController: *productController,
 	}
 	appRoute.Init(e)
 
