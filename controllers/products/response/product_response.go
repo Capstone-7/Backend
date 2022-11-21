@@ -2,6 +2,7 @@ package response
 
 import (
 	"capstone/businesses/products"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,20 +14,22 @@ type Product struct {
 	Details      string `bson:"details" json:"details"`
 	Price        int	`bson:"price" json:"price"`
 	Type         string `bson:"type" json:"type"`
-	ActivePeriod string `bson:"active_period" json:"active_period"`
+	Category	 string `bson:"category" json:"category"`
+	ActivePeriod int	`bson:"active_period" json:"active_period"`
 	Status       string `bson:"status" json:"status"`
 	IconUrl      string `bson:"icon_url" json:"icon_url"`
 }
 
 func FromDomain(domain *products.Domain) *Product {
 	return &Product{
-		ID: domain.Id,
+		ID: domain.ID,
 		Code: domain.Code,
 		Description: domain.Description,
 		Nominal: domain.Nominal,
 		Details: domain.Details,
 		Price: domain.Price,
 		Type: domain.Type,
+		Category: domain.Category,
 		ActivePeriod: domain.ActivePeriod,
 		Status: domain.Status,
 		IconUrl: domain.IconUrl,

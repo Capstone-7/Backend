@@ -25,16 +25,17 @@ func (r *UserRepository) Create(domain *users.Domain) (users.Domain, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	// Generate ID
-	domain.ID = primitive.NewObjectID()
-
 	// Insert data
-	_, err := r.collection.InsertOne(ctx, domain)
+	res, err := r.collection.InsertOne(ctx, FromDomain(domain))
 	if err != nil {
 		return users.Domain{}, err
 	}
 
-	return *domain, nil
+	// Get inserted data
+	var user users.Domain
+	err = r.collection.FindOne(ctx, bson.M{"_id": res.InsertedID}).Decode(&user)
+
+	return user, nil
 }
 
 // GetAll

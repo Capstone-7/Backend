@@ -5,19 +5,20 @@ import (
 )
 
 type Domain struct {
-	Id           primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
 	Code         string             `bson:"code" json:"code"`
 	Description  string             `bson:"description" json:"description"`
 	Nominal      string             `bson:"nominal" json:"nominal"`
 	Details      string             `bson:"details" json:"details"`
-	Price        int             `bson:"price" json:"price"`
+	Price        int             	`bson:"price" json:"price"`
 	Type         string             `bson:"type" json:"type"`
-	ActivePeriod string             `bson:"active_period" json:"active_period"`
+	Category     string             `bson:"category" json:"category"`
+	ActivePeriod int             	`bson:"active_period" json:"active_period"`
 	Status       string             `bson:"status" json:"status"`
 	IconUrl      string             `bson:"icon_url" json:"icon_url"`
-	CreatedAt    primitive.DateTime `bson:"created_at" json:"created_at"`
-	UpdatedAt    primitive.DateTime `bson:"updated_at" json:"updated_at"`
-	DeletedAt    primitive.DateTime `bson:"deleted_at" json:"deleted_at"`
+	Created      primitive.DateTime `bson:"created" json:"created"`
+	Updated      primitive.DateTime `bson:"updated" json:"updated"`
+	Deleted      primitive.DateTime `bson:"deleted" json:"deleted"`
 }
 
 type UseCase interface {
@@ -26,6 +27,12 @@ type UseCase interface {
 	CreateProduct(domain *Domain) (Domain, error)
 	UpdateProduct(domain *Domain) (Domain, error)
 	DeleteProduct(id string) (Domain, error)
+
+	GetCategories() ([]string, error)
+	GetCategoriesByProductType(productType string) ([]string, error)
+	GetProductsByCategory(category string) ([]Domain, error)
+	GetProductsByProductType(productType string) ([]Domain, error)
+	GetTotalProducts() (int64, error)
 }
 
 type Repository interface {
@@ -34,5 +41,11 @@ type Repository interface {
 	Update( new *Domain) (Domain, error)
 	Delete(id primitive.ObjectID) (Domain, error)
 	GetByID(id primitive.ObjectID) (Domain, error)
-	GetAll() ([]Domain, error)
+	GetOneByCode(code string, only_not_deleted bool) (Domain, error)
+	GetManyByType(code string, only_not_deleted bool) ([]Domain, error)
+	GetManyByCategory(code string, only_not_deleted bool) ([]Domain, error)
+	GetCategories() ([]string, error)
+	GetCategoriesByType(product_type string) ([]string, error)
+	GetAll(only_not_deleted bool) ([]Domain, error)
+	CountProducts() (int64, error)
 }

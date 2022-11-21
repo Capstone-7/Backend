@@ -8,8 +8,8 @@ import (
 	"fmt"
 
 	_productsUseCase "capstone/businesses/products"
-	_productController "capstone/controller/products"
 	_userUseCase "capstone/businesses/users"
+	_productController "capstone/controllers/products"
 	_userController "capstone/controllers/users"
 
 	"github.com/labstack/echo/v4"
@@ -40,6 +40,7 @@ func main() {
 	// Init routes
 	appRoute := route.ControllerList{
 		UserController: *userController,
+		ProductController: *productController,
 	}
 	appRoute.Init(e)
 

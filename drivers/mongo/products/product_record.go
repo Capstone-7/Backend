@@ -2,40 +2,43 @@ package products
 
 import (
 	"capstone/businesses/products"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Product struct {
-	Id           primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
-	Code         string             `bson:"username" json:"username"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
+	Code         string             `bson:"code" json:"code"`
 	Description  string             `bson:"description" json:"description"`
 	Nominal      string             `bson:"nominal" json:"nominal"`
 	Details      string             `bson:"details" json:"details"`
-	Price        int             `bson:"price" json:"price"`
+	Price        int             	`bson:"price" json:"price"`
 	Type         string             `bson:"type" json:"type"`
-	ActivePeriod string             `bson:"active_period" json:"active_period"`
+	Category     string             `bson:"category" json:"category"`
+	ActivePeriod int	            `bson:"active_period" json:"active_period"`
 	Status       string             `bson:"status" json:"status"`
 	IconUrl      string             `bson:"icon_url" json:"icon_url"`
-	CreatedAt    primitive.DateTime `bson:"created_at" json:"created_at"`
-	UpdatedAt    primitive.DateTime `bson:"updated_at" json:"updated_at"`
-	DeletedAt    primitive.DateTime `bson:"deleted_at" json:"deleted_at"`
+	Created      primitive.DateTime `bson:"created" json:"created"`
+	Updated      primitive.DateTime `bson:"updated" json:"updated"`
+	Deleted      primitive.DateTime `bson:"deleted" json:"deleted"`
 }
 
 func FromDomain(domain *products.Domain) *Product {
 	return &Product{
-		Id:           domain.Id,
+		ID:           domain.ID,
 		Code:         domain.Code,
 		Description:  domain.Description,
 		Nominal:      domain.Nominal,
 		Details:      domain.Details,
 		Price:        domain.Price,
 		Type:         domain.Type,
+		Category:     domain.Category,
 		ActivePeriod: domain.ActivePeriod,
 		Status:       domain.Status,
 		IconUrl:      domain.IconUrl,
-		CreatedAt:    domain.CreatedAt,
-		UpdatedAt:    domain.UpdatedAt,
-		DeletedAt:    domain.DeletedAt,
+		Created:      domain.Created,
+		Updated:      domain.Updated,
+		Deleted:      domain.Deleted,
 	}
 }
 
@@ -49,19 +52,20 @@ func FromDomainArray(domain []products.Domain) []Product {
 
 func (p *Product) ToDomain() products.Domain {
 	return products.Domain{
-		Id:           p.Id,
+		ID:           p.ID,
 		Code:         p.Code,
 		Description:  p.Description,
 		Nominal:      p.Nominal,
 		Details:      p.Details,
 		Price:        p.Price,
 		Type:         p.Type,
+		Category:     p.Category,
 		ActivePeriod: p.ActivePeriod,
 		Status:       p.Status,
 		IconUrl:      p.IconUrl,
-		CreatedAt:    p.CreatedAt,
-		UpdatedAt:    p.UpdatedAt,
-		DeletedAt:    p.DeletedAt,
+		Created:    p.Created,
+		Updated:    p.Updated,
+		Deleted:    p.Deleted,
 	}
 }
 
