@@ -9,11 +9,14 @@ import (
 
 	_productsUseCase "capstone/businesses/products"
 	_productController "capstone/controller/products"
+	_userUseCase "capstone/businesses/users"
+	_userController "capstone/controllers/users"
+
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	// Setup DB
 	// Setup DB
 	client, err := mongo_driver.Connect()
 	if err != nil {
@@ -27,14 +30,24 @@ func main() {
 	productRepo := drivers.NewProductRepository(mongo_driver.GetDB())
 	productUseCase := _productsUseCase.NewProductUseCase(productRepo)
 	productController := _productController.NewProductController(productUseCase)
+
+	// User
+	userRepo := drivers.NewUserRepository(mongo_driver.GetDB())
+	otpRepo := drivers.NewOTPRepository(mongo_driver.GetDB())
+	userUseCase := _userUseCase.NewUserUseCase(userRepo, otpRepo)
+	userController := _userController.NewUserController(userUseCase)
 	
 	// Init routes
 	appRoute := route.ControllerList{
-		ProductController: *productController,
+		UserController: *userController,
 	}
 	appRoute.Init(e)
 
-
+	// Enable CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	// Start in HTTPS mode
 	fmt.Println("Starting server...")
