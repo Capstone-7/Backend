@@ -30,6 +30,7 @@ type UseCase interface {
 	GetByID(id string) (Domain, error)
 	UpdateByAdmin(new *Domain) (Domain, error)
 	DeleteByAdmin(id string) (Domain, error)
+	GetTotalUsers() (int64, error)
 }
 
 type Repository interface {
@@ -39,4 +40,5 @@ type Repository interface {
 	GetByID(id primitive.ObjectID) (Domain, error)
 	GetByEmail(email string) (Domain, error)
 	GetAll() ([]Domain, error)
+	Count() (int64, error)
 }

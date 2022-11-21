@@ -122,3 +122,17 @@ func (r *UserRepository) Delete(id primitive.ObjectID) (users.Domain, error) {
 
 	return user, nil
 }
+
+// Count Users
+func (r *UserRepository) Count() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	// Count user not deleted
+	count, err := r.collection.CountDocuments(ctx, bson.M{"deleted": primitive.NewDateTimeFromTime(time.Time{})})
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

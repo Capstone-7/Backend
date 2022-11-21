@@ -53,6 +53,7 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 	users.POST("/request-otp", cl.UserController.RequestOTP)
 	users.POST("/verify-email", cl.UserController.VerifyEmail)
 	users.POST("/reset-password", cl.UserController.ResetPassword)
+	users.GET("/count", cl.UserController.GetTotalUsers, admin.Middleware)
 
 	users.GET("", cl.UserController.GetAllUsers, admin.Middleware)
 	users.GET("/all", cl.UserController.GetAllUsers, admin.Middleware)

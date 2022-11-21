@@ -294,3 +294,8 @@ func (u *UserUseCase) ResetPassword(email, new_password, code string) (Domain, e
 
 	return user, nil
 }
+
+// Get Total Users
+func (u *UserUseCase) GetTotalUsers() (int64, error) {
+	return u.UserRepository.Count()
+}
