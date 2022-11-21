@@ -7,6 +7,8 @@ import (
 	utils "capstone/utils"
 	"fmt"
 
+	_productsUseCase "capstone/businesses/products"
+	_productController "capstone/controller/products"
 	_userUseCase "capstone/businesses/users"
 	_userController "capstone/controllers/users"
 
@@ -23,6 +25,11 @@ func main() {
 	mongo_driver.SetClient(client)
 
 	e := echo.New()
+
+	//product
+	productRepo := drivers.NewProductRepository(mongo_driver.GetDB())
+	productUseCase := _productsUseCase.NewProductUseCase(productRepo)
+	productController := _productController.NewProductController(productUseCase)
 
 	// User
 	userRepo := drivers.NewUserRepository(mongo_driver.GetDB())

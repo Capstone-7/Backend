@@ -1,6 +1,7 @@
 package route
 
 import (
+	"capstone/controller/products"
 	"capstone/app/middlewares"
 	"capstone/controllers/users"
 
@@ -8,6 +9,7 @@ import (
 )
 
 type ControllerList struct {
+	ProductController products.ProductController
 	UserController users.UserController
 }
 
@@ -24,6 +26,14 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 
 	apiV1 := e.Group("/api/v1")
 
+ 	// products
+	product := apiV1.Group("/product")
+	product.GET("", cl.ProductController.GetAll)
+	product.POST("", cl.ProductController.Create)
+	product.GET("/:id", cl.ProductController.GetProductByID)
+	product.PUT("/:id", cl.ProductController.UpdateProduct)
+	product.DELETE("/:id", cl.ProductController.DeleteProduct)
+  
 	// User
 	users := apiV1.Group("/user")
 	users.POST("/register", cl.UserController.Register)
