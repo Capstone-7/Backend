@@ -107,6 +107,7 @@ type UserUpdateByAdmin struct {
 	Password string `json:"password" validate:"required,min=8,max=12,containsany=ABCDEFGHIJKLMNOPQRSTUVWXYZ,containsany=!@#$%^&*,containsany=abcdefghijklmnopqrstuvwxyz,containsany=0123456789"`
 	Name	 string `json:"name" validate:"required,min=3,max=50"`
 	Status	 string `json:"status" validate:"required,min=3,max=50"`
+	Role	 string `json:"role"`
 	IsActivated bool `json:"is_activated"`
 }
 
@@ -156,6 +157,7 @@ func (u *UserUpdateByAdmin) ToDomain() *users.Domain {
 		Email:    u.Email,
 		Password: u.Password,
 		Name:     u.Name,
+		Role:    u.Role,
 		Status:   u.Status,
 	}
 
