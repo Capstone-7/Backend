@@ -224,3 +224,13 @@ func (t *TransactionUseCase) GetTransactionHistoryByID(id string, user *users.Do
 
 	return transactionResp, err
 }
+
+func (t *TransactionUseCase) GetAllTransaction(page, limit int64, status string) ([]response.TransactionResponse, error) {
+	// Get Transactions
+	transactions, err := t.TransactionRepository.GetAllTransaction(page, limit, status)
+	if err != nil {
+		return transactions, err
+	}
+
+	return transactions, err
+}

@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	appjwt "capstone/utils/jwt"
@@ -256,7 +257,6 @@ func (t *TransactionController) GetTransactionHistoryByID(c echo.Context) error 
 		Message: "Success",
 		Data:    transaction,
 	})
-
 }
 
 // Change Transaction Status
@@ -281,5 +281,29 @@ func (t *TransactionController) ChangeTransactionStatus(c echo.Context) error {
 		Status:  http.StatusOK,
 		Message: "Success",
 		Data:    transaction,
+	})
+}
+
+// Get All Transaction By Admin
+func (t *TransactionController) GetAllTransaction(c echo.Context) error {
+	// Get query params
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+	status := c.QueryParam("status")
+	
+	// Get transaction history
+	transactions, err := t.TransactionUseCase.GetAllTransaction(int64(page), int64(limit), status)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    transactions,
 	})
 }

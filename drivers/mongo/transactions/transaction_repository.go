@@ -291,3 +291,102 @@ func (t *TransactionRepository) GetAllTransactionHistoryByUserID(userID primitiv
 	err = cursor.All(ctx, &transaction_array)
 	return transaction_array, err
 }
+
+// GetAllTransaction(page, limit int64, status string)
+func (t *TransactionRepository) GetAllTransaction(page, limit int64, status string) ([]response.TransactionResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	search := bson.D{}
+	if status != "" {
+		search = bson.D{{Key: "$match", Value: bson.D{{Key: "status", Value: status}}}}
+	}else{
+		// search all
+		search = bson.D{{Key: "$match", Value: bson.D{{Key: "status", Value: bson.D{{Key: "$ne", Value: "DELETED"}}}}}}
+	}
+
+	var transaction_array []response.TransactionResponse
+	cursor, err := t.collection.Aggregate(ctx, bson.A{
+		search,
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "users"},
+					{Key: "localField", Value: "user_id"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "user"},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "products"},
+					{Key: "localField", Value: "product_id"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "product"},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$set",
+				Value: bson.D{
+					{Key: "user_email",
+						Value: bson.D{
+							{Key: "$arrayElemAt",
+								Value: bson.A{
+									"$user.email",
+									0,
+								},
+							},
+						},
+					},
+					{Key: "product_code",
+						Value: bson.D{
+							{Key: "$arrayElemAt",
+								Value: bson.A{
+									"$product.code",
+									0,
+								},
+							},
+						},
+					},
+					{Key: "product_description",
+						Value: bson.D{
+							{Key: "$arrayElemAt",
+								Value: bson.A{
+									"$product.description",
+									0,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$project",
+				Value: bson.D{
+					{Key: "user_id", Value: 0},
+					{Key: "product_id", Value: 0},
+					{Key: "deleted", Value: 0},
+					{Key: "user", Value: 0},
+					{Key: "product", Value: 0},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$skip", Value: (page - 1) * limit},
+		},
+		bson.D{
+			{Key: "$limit", Value: limit},
+		},
+	})
+
+	if err != nil {
+		return []response.TransactionResponse{}, err
+	}
+
+	err = cursor.All(ctx, &transaction_array)
+	return transaction_array, err
+}
