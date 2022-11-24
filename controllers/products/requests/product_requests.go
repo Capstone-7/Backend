@@ -15,7 +15,7 @@ type Product struct {
 	Description  string `bson:"description" json:"description" validate:"required,min=1"`
 	Nominal      string `bson:"nominal" json:"nominal" validate:"required"`
 	Details      string `bson:"details" json:"details" validate:"required"`
-	Price        int	`bson:"price" json:"price" validate:"gte=0"`
+	Price        int64	`bson:"price" json:"price" validate:"gte=0"`
 	Type         string `bson:"type" json:"type" validate:"required"`
 	Category     string `bson:"category" json:"category" validate:"required"`
 	ActivePeriod int 	`bson:"active_period" json:"active_period" validate:"gte=0"`

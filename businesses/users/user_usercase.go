@@ -149,7 +149,16 @@ func (u *UserUseCase) UpdateByAdmin(new *Domain) (Domain, error) {
 		return Domain{}, err
 	}
 
-	user.Status = new.Status
+	if user.Status != "" {
+		user.Status = new.Status
+	}
+
+	if user.Role != "" {
+		user.Role = new.Role
+	}
+
+	user.Name = new.Name
+	user.Updated = primitive.NewDateTimeFromTime(time.Now())
 
 	if new.Email != user.Email {
 		// Check if email already exists

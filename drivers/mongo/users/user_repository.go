@@ -3,6 +3,8 @@ package users
 import (
 	"capstone/businesses/users"
 	"context"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -90,6 +92,10 @@ func (r *UserRepository) Update(new *users.Domain) (users.Domain, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
+	// Print JSON Marshal
+	json, _ := json.Marshal(new)
+	fmt.Println(string(json))
+
 	// Update data
 	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": new.ID}, bson.M{"$set": new})
 	if err != nil {
@@ -108,14 +114,14 @@ func (r *UserRepository) Delete(id primitive.ObjectID) (users.Domain, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	var user users.Domain
-	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	// Shadow delete
+	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"deleted": primitive.NewDateTimeFromTime(time.Now())}})
 	if err != nil {
 		return users.Domain{}, err
 	}
-
-	// Shadow delete
-	_, err = r.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"deleted": primitive.NewDateTimeFromTime(time.Now())}})
+	
+	var user users.Domain
+	err = r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
 	if err != nil {
 		return users.Domain{}, err
 	}

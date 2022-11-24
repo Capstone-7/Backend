@@ -12,6 +12,9 @@ import (
 	_productController "capstone/controllers/products"
 	_userController "capstone/controllers/users"
 
+	_transactionUseCase "capstone/businesses/transactions"
+	_transactionController "capstone/controllers/transactions"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -36,11 +39,18 @@ func main() {
 	otpRepo := drivers.NewOTPRepository(mongo_driver.GetDB())
 	userUseCase := _userUseCase.NewUserUseCase(userRepo, otpRepo)
 	userController := _userController.NewUserController(userUseCase)
+
+	// Transaction
+	transactionRepo := drivers.NewTransactionRepository(mongo_driver.GetDB())
+	transactionUseCase := _transactionUseCase.NewTransactionUseCase(transactionRepo)
+	transactionController := _transactionController.NewTransactionController(transactionUseCase, productUseCase, userUseCase)
+
 	
 	// Init routes
 	appRoute := route.ControllerList{
 		UserController: *userController,
 		ProductController: *productController,
+		TransactionController: *transactionController,
 	}
 	appRoute.Init(e)
 
