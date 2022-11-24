@@ -12,7 +12,7 @@ type Product struct {
 	Description  string `bson:"description" json:"description"`
 	Nominal      string `bson:"nominal" json:"nominal"`
 	Details      string `bson:"details" json:"details"`
-	Price        int	`bson:"price" json:"price"`
+	Price        int64	`bson:"price" json:"price"`
 	Type         string `bson:"type" json:"type"`
 	Category	 string `bson:"category" json:"category"`
 	ActivePeriod int	`bson:"active_period" json:"active_period"`

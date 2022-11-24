@@ -3,6 +3,7 @@ package route
 import (
 	"capstone/app/middlewares"
 	"capstone/controllers/products"
+	"capstone/controllers/transactions"
 	"capstone/controllers/users"
 
 	"github.com/labstack/echo/v4"
@@ -11,6 +12,7 @@ import (
 type ControllerList struct {
 	ProductController products.ProductController
 	UserController users.UserController
+	TransactionController transactions.TransactionController
 }
 
 func (cl *ControllerList) Init(e *echo.Echo) {
@@ -60,4 +62,15 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 	users.GET("/:id", cl.UserController.GetUserByID, admin.Middleware)
 	users.PUT("/:id", cl.UserController.UpdateUserByID, admin.Middleware)
 	users.DELETE("/:id", cl.UserController.DeleteUserByID, admin.Middleware)
+
+	// Transaction
+	transactions := apiV1.Group("/transaction")
+	transactions.POST("/review", cl.TransactionController.ReviewTransaction, middlewares.AuthMiddleware)
+	transactions.POST("/submit", cl.TransactionController.SubmitTransaction, middlewares.AuthMiddleware)
+	transactions.GET("/history", cl.TransactionController.GetTransactionHistory, middlewares.AuthMiddleware)
+	transactions.GET("/history/all", cl.TransactionController.GetAllTransaction, admin.Middleware)
+	transactions.GET("/history/:id", cl.TransactionController.GetTransactionHistoryByID, middlewares.AuthMiddleware)
+	transactions.PUT("/:id", cl.TransactionController.ChangeTransactionStatus, admin.Middleware)
+	// callback
+	transactions.POST("/callback", cl.TransactionController.XenditCallback)
 }
