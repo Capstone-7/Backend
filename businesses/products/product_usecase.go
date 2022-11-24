@@ -97,3 +97,7 @@ func (p *ProductUseCase) GetProductsByProductType(productType string) ([]Domain,
 func (p *ProductUseCase) GetTotalProducts() (int64, error) {
 	return p.ProductRepository.CountProducts()
 }
+
+func (p *ProductUseCase) GetProductByCode(code string) (Domain, error) {
+	return p.ProductRepository.GetOneByCode(code, true)
+}
