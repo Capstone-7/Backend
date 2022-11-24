@@ -258,3 +258,28 @@ func (t *TransactionController) GetTransactionHistoryByID(c echo.Context) error 
 	})
 
 }
+
+// Change Transaction Status
+func (t *TransactionController) ChangeTransactionStatus(c echo.Context) error {
+	transactionID := c.Param("id")
+
+	// Get request body
+	request := requests.ChangeTransactionStatus{}
+	c.Bind(&request)
+
+	// Update transaction status
+	transaction, err := t.TransactionUseCase.ChangeTransactionStatus(transactionID, request.Status)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    transaction,
+	})
+}

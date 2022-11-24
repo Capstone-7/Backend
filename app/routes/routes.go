@@ -69,6 +69,7 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 	transactions.POST("/submit", cl.TransactionController.SubmitTransaction, middlewares.AuthMiddleware)
 	transactions.GET("/history", cl.TransactionController.GetTransactionHistory, middlewares.AuthMiddleware)
 	transactions.GET("/history/:id", cl.TransactionController.GetTransactionHistoryByID, middlewares.AuthMiddleware)
+	transactions.PUT("/:id", cl.TransactionController.ChangeTransactionStatus, admin.Middleware)
 	// callback
 	transactions.POST("/callback", cl.TransactionController.XenditCallback)
 }

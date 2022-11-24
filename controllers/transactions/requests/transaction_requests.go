@@ -82,3 +82,38 @@ func (r *ReviewTransactionRequest) Validate() []helpers.ValidationErrors {
 
 	return nil
 }
+
+type ChangeTransactionStatus struct {
+	Status string `json:"status" validate:"required"`
+}
+
+func (r *ChangeTransactionStatus) Validate() []helpers.ValidationErrors {
+	var ve validator.ValidationErrors
+
+	if err := validator.New().Struct(r); err != nil {
+		if errors.As(err, &ve) {
+			fields := structs.Fields(r)
+			out := make([]helpers.ValidationErrors, len(ve))
+
+			for i, e := range ve {
+				out[i] = helpers.ValidationErrors{
+					Field:   e.Field(),
+					Message: helpers.MsgForTag(e.Tag()),
+				}
+
+				out[i].Message = strings.Replace(out[i].Message, "[PARAM]", e.Param(), 1)
+
+				// Get field tag
+				for _, f := range fields {
+					if f.Name() == e.Field() {
+						out[i].Field = f.Tag("json")
+						break
+					}
+				}
+			}
+			return out
+		}
+	}
+
+	return nil
+}
