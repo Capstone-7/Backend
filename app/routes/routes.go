@@ -67,8 +67,8 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 	transactions := apiV1.Group("/transaction")
 	transactions.POST("/review", cl.TransactionController.ReviewTransaction, middlewares.AuthMiddleware)
 	transactions.POST("/submit", cl.TransactionController.SubmitTransaction, middlewares.AuthMiddleware)
-	// transactions.GET("/history", cl.TransactionController.GetTransactionHistory, middlewares.AuthMiddleware)
-	// transactions.GET("/history/:id", cl.TransactionController.GetTransactionHistoryByID, middlewares.AuthMiddleware)
-	// // callback
+	transactions.GET("/history", cl.TransactionController.GetTransactionHistory, middlewares.AuthMiddleware)
+	transactions.GET("/history/:id", cl.TransactionController.GetTransactionHistoryByID, middlewares.AuthMiddleware)
+	// callback
 	transactions.POST("/callback", cl.TransactionController.XenditCallback)
 }

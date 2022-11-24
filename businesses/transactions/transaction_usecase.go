@@ -4,6 +4,7 @@ import (
 	"capstone/businesses/products"
 	"capstone/businesses/users"
 	"capstone/controllers/transactions/requests"
+	"capstone/controllers/transactions/response"
 	"capstone/helpers"
 	"capstone/utils"
 	"errors"
@@ -188,4 +189,38 @@ func (t *TransactionUseCase) GetTransactionByXenditInvoiceID(id string) (Domain,
 	}
 
 	return transaction, err
+}
+
+// Get Transaction History By User ID
+func (t *TransactionUseCase) GetTransactionHistoryByUserID(userID string) ([]response.TransactionResponse, error) {
+	// Get Transactions
+	ObjID, _ := primitive.ObjectIDFromHex(userID)
+
+	transactions, err := t.TransactionRepository.GetAllTransactionHistoryByUserID(ObjID)
+	if err != nil {
+		return transactions, err
+	}
+
+	return transactions, err
+}
+
+// Get Transaction History By ID
+func (t *TransactionUseCase) GetTransactionHistoryByID(id string, user *users.Domain) (response.TransactionResponse, error) {
+	// Get Transaction
+	ObjID, _ := primitive.ObjectIDFromHex(id)
+
+	transaction, err := t.TransactionRepository.GetByID(ObjID)
+	if err != nil {
+		return response.TransactionResponse{}, err
+	}
+
+	// Check if user is the owner of the transaction, if admin then return the transaction
+	if transaction.UserID.Hex() != user.ID.Hex() && user.Role != "admin" {
+		return response.TransactionResponse{}, errors.New("You are not the owner of this transaction")
+	}
+
+	// Get the response data
+	transactionResp, err := t.TransactionRepository.GetTransactionHistoryByID(ObjID)
+
+	return transactionResp, err
 }

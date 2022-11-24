@@ -4,6 +4,7 @@ import (
 	"capstone/businesses/products"
 	"capstone/businesses/users"
 	"capstone/controllers/transactions/requests"
+	"capstone/controllers/transactions/response"
 
 	"github.com/xendit/xendit-go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,6 +39,9 @@ type UseCase interface {
 	GetTransactionByID(id string) (Domain, error)
 	GetTransactionsByUserID(userID string) ([]Domain, error)
 	GetTransactionByXenditInvoiceID(xenditInvoiceID string) (Domain, error)
+
+	GetTransactionHistoryByUserID(userID string) ([]response.TransactionResponse, error)
+	GetTransactionHistoryByID(id string, user *users.Domain) (response.TransactionResponse, error)
 }
 
 type Repository interface {
@@ -47,4 +51,7 @@ type Repository interface {
 	GetByID(id primitive.ObjectID) (Domain, error)
 	GetByUserID(userID primitive.ObjectID) ([]Domain, error)
 	GetByXenditInvoiceID(xenditInvoiceID string) (Domain, error)
+	
+	GetTransactionHistoryByID(id primitive.ObjectID) (response.TransactionResponse, error)
+	GetAllTransactionHistoryByUserID(userID primitive.ObjectID) ([]response.TransactionResponse, error)
 }

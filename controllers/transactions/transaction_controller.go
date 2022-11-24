@@ -185,3 +185,76 @@ func (t *TransactionController) XenditCallback(c echo.Context) error {
 		Data:    transaction,
 	})
 }
+
+// Get Transaction History by user id
+func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
+	// Get user id from token
+	tokenString := strings.Replace(c.Request().Header.Get("Authorization"), "Bearer ", "", -1)
+
+	// Get user id from token
+	user_id := appjwt.GetID(tokenString)
+
+	// Get user data
+	user, err := t.UserUseCase.GetByID(user_id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: "Please login again",
+			Data:    nil,
+		})
+	}
+
+	// Get transaction history
+	transactions, err := t.TransactionUseCase.GetTransactionHistoryByUserID(user.ID.Hex())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    transactions,
+	})
+}
+
+// GetTransactionHistoryByID
+func (t *TransactionController) GetTransactionHistoryByID(c echo.Context) error {
+	transactionID := c.Param("id")
+
+	// Get user id from token
+	tokenString := strings.Replace(c.Request().Header.Get("Authorization"), "Bearer ", "", -1)
+
+	// Get user id from token
+	user_id := appjwt.GetID(tokenString)
+
+	// Get user data
+	user, err := t.UserUseCase.GetByID(user_id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: "Please login again",
+			Data:    nil,
+		})
+	}
+
+	// Get transaction history
+	transaction, err := t.TransactionUseCase.GetTransactionHistoryByID(transactionID, &user)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    transaction,
+	})
+
+}
