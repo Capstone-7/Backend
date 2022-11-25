@@ -307,3 +307,22 @@ func (t *TransactionController) GetAllTransaction(c echo.Context) error {
 		Data:    transactions,
 	})
 }
+
+// Get Total Transaction
+func (t *TransactionController) GetTotalTransaction(c echo.Context) error {
+	// Get total transaction
+	total, err := t.TransactionUseCase.GetTotalTransaction()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    total,
+	})
+}

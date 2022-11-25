@@ -234,3 +234,14 @@ func (t *TransactionUseCase) GetAllTransaction(page, limit int64, status string)
 
 	return transactions, err
 }
+
+// Count
+func (t *TransactionUseCase) GetTotalTransaction() (int64, error) {
+	// Get Transactions
+	total, err := t.TransactionRepository.Count()
+	if err != nil {
+		return total, err
+	}
+
+	return total, err
+}

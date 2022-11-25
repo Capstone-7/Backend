@@ -390,3 +390,12 @@ func (t *TransactionRepository) GetAllTransaction(page, limit int64, status stri
 	err = cursor.All(ctx, &transaction_array)
 	return transaction_array, err
 }
+
+// Count all transaction
+func (t *TransactionRepository) Count() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	count, err := t.collection.CountDocuments(ctx, bson.D{})
+	return count, err
+}
