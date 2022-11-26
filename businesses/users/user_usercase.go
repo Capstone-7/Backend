@@ -59,9 +59,9 @@ func (u *UserUseCase) Login(domain *Domain) (string, error) {
 	}
 
 	// Check is user active
-	if user.Status != "verified" {
-		return "", errors.New("user is not active")
-	}
+	// if user.Status != "verified" {
+	// 	return "", errors.New("user is not active")
+	// }
 
 	// Check is user deleted
 	if user.Deleted != primitive.NewDateTimeFromTime(time.Time{}) {
