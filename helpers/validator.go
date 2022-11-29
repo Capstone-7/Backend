@@ -8,34 +8,34 @@ type ValidationErrors struct {
 func MsgForTag(tag string) string {
 	switch tag {
 	case "required":
-		return "This field is required"
+		return "Kolom ini harus diisi"
 	case "email":
-		return "Invalid email"
+		return "Email tidak valid"
 	case "min":
-		return "This field must be at least [PARAM] characters"
+		return "Kolom ini setidaknya berisi [PARAM] karakter"
 	case "max":
-		return "This field must be at most [PARAM] characters"
+		return "Kolom ini maksimal berisi [PARAM] karakter"
 	case "alphanum":
-		return "This field must be alphanumeric"
+		return "Kolom ini harus berisi alphanumeric"
 	case "containsany":
-		return "This field must contain at least one special character, one uppercase letter, one lowercase letter, and one number"
+		return "Kolom ini harus berisi setidaknya satu karakter spesial, satu huruf kapital, satu huruf kecil, dan satu angka"
 	case "alpha":
-		return "This field must be alphabetic"
+		return "Kolom ini harus berisi alphabetic"
 	case "uppercase":
-		return "This field must contain at least one uppercase character"
+		return "Kolom ini setidaknya berisi 1 huruf kapital"
 	case "lowercase":
-		return "This field must contain at least one lowercase character"
+		return "Kolom ini setidaknya berisi 1 huruf kapital"
 	case "alphanumunicode":
-		return "This field must be alphanumeric and unicode"
+		return "Kolom ini harus berisi alphanumeric and unicode"
 	case "eqfield":
-		return "This field must be equal to [PARAM]"
+		return "Kolom ini harus sama dengan [PARAM]"
 	case "len":
-		return "This field must be [PARAM] characters"
+		return "Kolom ini harus berisi [PARAM] karakter"
 	case "gte":
-		return "This field must be greater than or equal to [PARAM]"
+		return "Kolom ini harus lebih besar atau sama dengan [PARAM]"
 	case "url":
-		return "This field must be a valid URL"
+		return "Kolom ini harus berisi URL valid"
 	default:
-		return "Invalid field " + tag
+		return "Kolom tidak valid " + tag
 	}
 }
