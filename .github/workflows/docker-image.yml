@@ -23,4 +23,4 @@ jobs:
     - name: Run docker
       run: docker run -itd -v /home/slave/payoll/.env:/app/.env -v /home/slave/payoll/key.pem:/app/key.pem -v /home/slave/payoll/cert.pem:/app/cert.pem -p 443:443 --name payoll payoll-api:1.0.0
     - name: Removing none tagged docker images
-      run: sudo docker rmi $(sudo docker images | grep '<none>' | tr -s ' ' | cut -d ' ' -f 3) || true
+      run: docker rmi $(docker images | grep '<none>' | tr -s ' ' | cut -d ' ' -f 3) || true
