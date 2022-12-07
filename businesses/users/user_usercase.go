@@ -134,7 +134,7 @@ func (u *UserUseCase) UpdatePassword(old *Domain, new *Domain) (Domain, error) {
 }
 
 func (u *UserUseCase) GetAllUsers() ([]Domain, error) {
-	return u.UserRepository.GetAll()
+	return u.UserRepository.GetAll(true)
 }
 
 func (u *UserUseCase) GetByID(id string) (Domain, error) {
