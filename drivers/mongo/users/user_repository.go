@@ -41,19 +41,33 @@ func (r *UserRepository) Create(domain *users.Domain) (users.Domain, error) {
 }
 
 // GetAll
-func (r *UserRepository) GetAll() ([]users.Domain, error) {
+func (r *UserRepository) GetAll(only_not_deleted bool) ([]users.Domain, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	var user_array []users.Domain
-	cursor, err := r.collection.Find(ctx, bson.M{})
-	if err != nil {
-		return []users.Domain{}, err
-	}
 
-	err = cursor.All(ctx, &user_array)
-	if err != nil {
-		return []users.Domain{}, err
+	if only_not_deleted {
+		cursor, err := r.collection.Find(ctx, bson.M{"deleted": primitive.NewDateTimeFromTime(time.Time{})})
+		if err != nil {
+			return []users.Domain{}, err
+		}
+
+		err = cursor.All(ctx, &user_array)
+		if err != nil {
+			return []users.Domain{}, err
+		}
+	} else {
+		cursor, err := r.collection.Find(ctx, bson.M{})
+		if err != nil {
+			return []users.Domain{}, err
+		}
+
+		err = cursor.All(ctx, &user_array)
+		if err != nil {
+			return []users.Domain{}, err
+		}
+
 	}
 
 	return user_array, nil

@@ -39,6 +39,6 @@ type Repository interface {
 	Delete(id primitive.ObjectID) (Domain, error)
 	GetByID(id primitive.ObjectID) (Domain, error)
 	GetByEmail(email string) (Domain, error)
-	GetAll() ([]Domain, error)
+	GetAll(only_not_deleted bool) ([]Domain, error)
 	Count() (int64, error)
 }
