@@ -73,6 +73,8 @@ func (cl *ControllerList) Init(e *echo.Echo) {
 	transactions.GET("/topbycategory", cl.TransactionController.GetTopProductsByCategory, admin.Middleware)
 	transactions.GET("/count", cl.TransactionController.GetTotalTransaction, admin.Middleware)
 	transactions.PUT("/:id", cl.TransactionController.ChangeTransactionStatus, admin.Middleware)
+	transactions.GET("/incomeperday", cl.TransactionController.GetIncomePerDay, admin.Middleware)
+	
 	// callback
 	transactions.POST("/callback", cl.TransactionController.XenditCallback)
 }
