@@ -345,3 +345,22 @@ func (t *TransactionController) GetTopProductsByCategory(c echo.Context) error {
 		Data:    topProducts,
 	})
 }
+
+// Get Income Per Day
+func (t *TransactionController) GetIncomePerDay(c echo.Context) error {
+	// Get income per day
+	income, err := t.TransactionUseCase.GetIncomePerDay()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    income,
+	})
+}

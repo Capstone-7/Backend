@@ -5,6 +5,7 @@ import (
 	"capstone/businesses/users"
 	"capstone/controllers/transactions/requests"
 	"capstone/controllers/transactions/response"
+	"time"
 
 	"github.com/xendit/xendit-go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -45,6 +46,7 @@ type UseCase interface {
 	GetAllTransaction(page, limit int64, status string) ([]response.TransactionResponse, error)
 	GetTotalTransaction() (int64, error)
 	GetTopProductsByCategory() (map[string]int, error)
+	GetIncomePerDay() (map[time.Time]map[string]int64, error)
 }
 
 type Repository interface {
@@ -60,4 +62,5 @@ type Repository interface {
 	GetAllTransaction(page, limit int64, status string) ([]response.TransactionResponse, error)
 	Count() (int64, error)
 	GetTopProductsByCategory() (map[string]int, error)
+	GetIncomeByTypeBetweenDate(startDate, endDate primitive.DateTime) (map[string]int64, error)
 }

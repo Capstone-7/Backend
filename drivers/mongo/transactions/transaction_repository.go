@@ -4,6 +4,7 @@ import (
 	"capstone/businesses/transactions"
 	"capstone/controllers/transactions/response"
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -458,4 +459,71 @@ func (t *TransactionRepository) GetTopProductsByCategory() (map[string]int, erro
 		top_product_array[result["_id"].(string)] = int(result["count"].(int32))
 	}
 	return top_product_array, err
+}
+
+// Get Between Date
+func (t *TransactionRepository) GetIncomeByTypeBetweenDate(startDate, endDate primitive.DateTime) (map[string]int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	income := map[string]int64{}
+	cursor, err := t.collection.Aggregate(ctx,bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "status", Value: "SUCCESS"}}}},
+		bson.D{{Key: "$match", Value: bson.D{{Key: "created", Value: bson.D{
+			{Key: "$gte", Value: startDate},
+			{Key: "$lte", Value: endDate},
+		}}}}},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "products"},
+					{Key: "localField", Value: "product_id"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "product"},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$set",
+				Value: bson.D{
+					{Key: "product_type",
+						Value: bson.D{
+							{Key: "$arrayElemAt",
+								Value: bson.A{
+									"$product.type",
+									0,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$group",
+				Value: bson.D{
+					{Key: "_id", Value: "$product_type"},
+					{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
+				},
+			},
+		},
+	});
+
+	if err != nil {
+		return map[string]int64{}, err
+	}
+
+	for cursor.Next(ctx) {
+		var result bson.M
+		err := cursor.Decode(&result)
+		if err != nil {
+			return map[string]int64{}, err
+		}
+
+		fmt.Println(result["_id"])
+		fmt.Println(result["count"])
+
+		income[result["_id"].(string)] = int64(result["count"].(int32))
+	}
+	return income, err
 }

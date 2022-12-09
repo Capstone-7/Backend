@@ -256,3 +256,34 @@ func (t *TransactionUseCase) GetTopProductsByCategory() (map[string]int, error) 
 
 	return topProducts, err
 }
+
+// Get Income Per Day
+func (t *TransactionUseCase) GetIncomePerDay() (map[time.Time]map[string]int64, error) {
+	// Get Transactions Last 7 Days
+
+	// Get Today
+	today := time.Now()
+	// Get 7 Days Ago
+	currentDate := today.AddDate(0, 0, -7)
+	
+	// Loop until today
+	incomePerDay := make(map[time.Time]map[string]int64)
+	for currentDate.Before(today) {
+		startDate := primitive.NewDateTimeFromTime(currentDate)
+		endDate := primitive.NewDateTimeFromTime(currentDate.AddDate(0, 0, 1))
+
+		// Get Income Per Day
+		income, err := t.TransactionRepository.GetIncomeByTypeBetweenDate(startDate, endDate)
+		if err != nil {
+			return incomePerDay, err
+		}
+
+		// Add to map
+		incomePerDay[currentDate] = income
+
+		// Add 1 day
+		currentDate = currentDate.AddDate(0, 0, 1)
+	}
+
+	return incomePerDay, nil
+}
