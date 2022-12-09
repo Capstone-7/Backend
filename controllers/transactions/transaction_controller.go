@@ -326,3 +326,22 @@ func (t *TransactionController) GetTotalTransaction(c echo.Context) error {
 		Data:    total,
 	})
 }
+
+// Get Top Products By Category
+func (t *TransactionController) GetTopProductsByCategory(c echo.Context) error {
+	// Get top products by category
+	topProducts, err := t.TransactionUseCase.GetTopProductsByCategory()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Data:    topProducts,
+	})
+}

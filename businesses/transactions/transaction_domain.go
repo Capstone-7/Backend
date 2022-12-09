@@ -44,6 +44,7 @@ type UseCase interface {
 	GetTransactionHistoryByID(id string, user *users.Domain) (response.TransactionResponse, error)
 	GetAllTransaction(page, limit int64, status string) ([]response.TransactionResponse, error)
 	GetTotalTransaction() (int64, error)
+	GetTopProductsByCategory() (map[string]int, error)
 }
 
 type Repository interface {
@@ -58,4 +59,5 @@ type Repository interface {
 	GetAllTransactionHistoryByUserID(userID primitive.ObjectID) ([]response.TransactionResponse, error)
 	GetAllTransaction(page, limit int64, status string) ([]response.TransactionResponse, error)
 	Count() (int64, error)
+	GetTopProductsByCategory() (map[string]int, error)
 }

@@ -399,3 +399,63 @@ func (t *TransactionRepository) Count() (int64, error) {
 	count, err := t.collection.CountDocuments(ctx, bson.D{})
 	return count, err
 }
+
+// Get Top Products By Category
+func (t *TransactionRepository) GetTopProductsByCategory() (map[string]int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	top_product_array := map[string]int{}
+	cursor, err := t.collection.Aggregate(ctx, bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "status", Value: "SUCCESS"}}}},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "products"},
+					{Key: "localField", Value: "product_id"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "product"},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$set",
+				Value: bson.D{
+					{Key: "product_category",
+						Value: bson.D{
+							{Key: "$arrayElemAt",
+								Value: bson.A{
+									"$product.category",
+									0,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$group",
+				Value: bson.D{
+					{Key: "_id", Value: "$product_category"},
+					{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
+				},
+			},
+		},
+	})
+
+	if err != nil {
+		return map[string]int{}, err
+	}
+
+	for cursor.Next(ctx) {
+		var result bson.M
+		err := cursor.Decode(&result)
+		if err != nil {
+			return map[string]int{}, err
+		}
+
+		top_product_array[result["_id"].(string)] = int(result["count"].(int32))
+	}
+	return top_product_array, err
+}

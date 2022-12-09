@@ -245,3 +245,14 @@ func (t *TransactionUseCase) GetTotalTransaction() (int64, error) {
 
 	return total, err
 }
+
+// Get Top Products By Category
+func (t *TransactionUseCase) GetTopProductsByCategory() (map[string]int, error) {
+	// Get Transactions
+	topProducts, err := t.TransactionRepository.GetTopProductsByCategory()
+	if err != nil {
+		return topProducts, err
+	}
+
+	return topProducts, err
+}
