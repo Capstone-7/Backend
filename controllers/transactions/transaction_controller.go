@@ -77,6 +77,7 @@ func (t *TransactionController) ReviewTransaction(c echo.Context) error {
 	transaction := t.TransactionUseCase.InitTransaction(&product, &user, request.CustomerID)
 	response := response.ReviewTransaction{
 		ProductCode: product.Code,
+		CustomerID: request.CustomerID,
 		ProductDescription: product.Description,
 		ProductPrice: product.Price,
 		AdminFee: transaction.AdminFee,
