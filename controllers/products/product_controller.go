@@ -167,6 +167,14 @@ func (p *ProductController) GetCategoriesByProductType(c echo.Context) error {
 		})
 	}
 
+	if len(category) == 0 {
+		return c.JSON(http.StatusNotFound, helpers.Response{
+			Status:  http.StatusNotFound,
+			Message: "Category not found",
+			Data:    category,
+		})
+	}
+
 	return c.JSON(http.StatusOK, helpers.Response{
 		Status:  http.StatusOK,
 		Message: "Success getting category list",
