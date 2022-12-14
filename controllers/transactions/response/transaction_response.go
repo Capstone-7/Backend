@@ -4,6 +4,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type ReviewTransaction struct {
 	ProductCode        string `json:"product_code"`
+	CustomerID		   string `json:"customer_id"`
 	ProductDescription string `json:"product_description"`
 	ProductPrice       int64  `json:"product_price"`
 	AdminFee           int64  `json:"admin_fee"`
